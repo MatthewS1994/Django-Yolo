@@ -16,7 +16,7 @@ flow파일 -> darkflow폴더에 있는 cli.py파일의 cliHandler(args) 안의 t
 파일경로를 쉽게 만들자(defaults의 경로를 가져오고 싶다)
 신뢰도 얼마 이상인 것들만 뽑아내게 하고 return 값들 중 하나라도 person이 있으면 True로
 
-미해결) 여러 이미지 파일에 대해서는 어떻게 처리할건지 생각해보자
+
 
 3. django의 views.py에 yolo를 심는과정
  manage.py가 있는 위치에 yolo파일들을 옮겼다 (runserver하는 시점이 root위치가 되기 때문에 상대위치를 참조할려면 이렇게 해야하는거 같다)
@@ -29,12 +29,6 @@ flow파일 -> darkflow폴더에 있는 cli.py파일의 cliHandler(args) 안의 t
  분석 파일은 photos폴더 경로 + views에서 넘겨주는 파일의 이름(request.FILES['photo'])이다
  json으로 넘기기 : 처음에 dict형식으로 껍질을 만들고 (result = {}) .update를 써서 dict 형식으로 다 담은 다음에 json.dumps()로 바꿔준다 (dump하면 에러나고 꼭 s붙여 dumps해야 함) 
 
-미해결)  html에 진짜 이미지의 분석 결과 파일이 나올 순 없는건가? 그럴려면 tfnet.predict()도 써야하는건가
-## 추가 작업 사항들
-0. 서버에 심기
-1. face verification 심기
-2. 비디오 파일에 대해서 라벨 추출하기
-3. 2가 성공하면 비디오를 스트리밍으로 바꾸기
 
 
 
