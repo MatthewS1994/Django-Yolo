@@ -1,37 +1,37 @@
-# Django로 업로드 한 파일 Yolo로 인식하기
+# Django Recognize files uploaded by Yolo
 
 
-## 작동법
-먼저 bin 폴더에 yolo.weights파일을 추가하셔야합니다 <br>
+## How it works
+First you need to add yolo.weights file to bin folder <br>
 <pre><code>
 python manage.py runserver
 </code></pre>
-## 작업하면서 기록해 둔 진행상황인데 나중에 다시 깔끔하게 정리해서 올리겠습니다.
-1. defaults.py 에서 기본설정을 변경해 args를 안주고 바로 실행가능하도록 바꿈
+## I've recorded the progress as I'm working on it.
+1. defaults.py Change the default setting in to make it immediately executable without args
 
-2. return 값을 받기 위한 코드 해체 작업
- 분류를 실행하고 이미지를 return해주는 코드가 어디있는지 찾아보자
-flow파일 -> darkflow폴더에 있는 cli.py파일의 cliHandler(args) 안의 tfnet.predict() ->  net폴더에 있는 build.py파일의 (__init__ 내용이 먼저 실행되고 나서) + TFNet.predict -> net폴더에 있는 flow.py파일의 predict() -> predict 안의 feed_dict(인듯?) -> yolo폴더에 있는 predict.py 의 boxresults의 mess (postprocess의 imgcv,mess)
- 결론 : cli.py의 tfnet.predict()를 tfnet.return_predict(이미지)로 바꿔준다 but return이 아직 안되는 중
-파일경로를 쉽게 만들자(defaults의 경로를 가져오고 싶다)
-신뢰도 얼마 이상인 것들만 뽑아내게 하고 return 값들 중 하나라도 person이 있으면 True로
-
-
-
-3. django의 views.py에 yolo를 심는과정
- manage.py가 있는 위치에 yolo파일들을 옮겼다 (runserver하는 시점이 root위치가 되기 때문에 상대위치를 참조할려면 이렇게 해야하는거 같다)
- python manage.py -runserver 를 하면 sys.argv로 runserver가 넘어와서 yolo를 실행할때 error가 뜬다(지금 yolo는 python flow만 실행하면 되게끔 , 즉 sus.argv를 아무것도 받지 않아야 하는 상태이다)
--->views.py의 cliHandler(sys.agrsv)에서 sys.argv를 빼고
-   cli.py의 cliHandler(args)에서 args를 빼고 FLAG.parseArgs(args)를 삭제했다
-
-4. 디테일 과정
- viewsd의 최종 return 이 HttpResponse(cliHandler(image_name))으로 yolo결과값을 return 해 준다
- 분석 파일은 photos폴더 경로 + views에서 넘겨주는 파일의 이름(request.FILES['photo'])이다
- json으로 넘기기 : 처음에 dict형식으로 껍질을 만들고 (result = {}) .update를 써서 dict 형식으로 다 담은 다음에 json.dumps()로 바꿔준다 (dump하면 에러나고 꼭 s붙여 dumps해야 함) 
+2. return Code disassembly to get the value
+ Find out where the code to run the classification and return the image
+tfnet.predict () in cliHandler (args) in the cli.py file in the flow file-> darkflow folder (after __init__ is executed first) + TFNet.predict-> net Predict () in flow.py file in folder-> feed_dict in predict-> mess in boxresults of predict.py in yolo folder (imgcv, mess in postprocess)
+ Conclusion: replace clinet's tfnet.predict () with tfnet.return_predict (image) but not returning yet
+Make file paths easier (I want to get the path of defaults)
+Only those things that have some confidence are to be extracted and True if any of the return values ​​are a person.
 
 
 
+3. django of views.py The process of planting yolo on
+ Moved yolo files to the location where manage.py resides
+ If you run python manage.py -runserver, runserver will run over to sys.argv and you will get an error when you run yolo.
+-> subtract sys.argv from cliHandler (sys.agrsv) in views.py
+   I removed args from cliHandler (args) in cli.py and deleted FLAG.parseArgs (args)
+
+4. Detail process
+ The final return of viewsd returns the yolo result with HttpResponse (cliHandler (image_name))
+ The analysis file is the file name (request.FILES ['photo']) passed from the photos folder path + views.
+ Pass it to json: first make a shell in dict format (result = {}) and use .update to put it in dict format and then change it to json.dumps ()
 
 
-## yolo 출처 
+
+
+
+## yolo source 
 https://pjreddie.com/darknet/yolo/
